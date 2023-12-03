@@ -1,0 +1,55 @@
+/* 本文件为字体引用设置 */
+
+/* ——————————————————————————————— 中文字体 ——————————————————————————————— */
+
+
+/* 侧边栏、右键菜单、底部栏、引用块、代码块、脚注 */
+@font-face {
+  font-family : "霞鹜文楷";
+  src         : url("../Fonts/Chinese-Fonts/LXGWWenKaiScreen.woff2");
+  font-display: swap;
+}
+
+
+/* 正文中文 */
+@font-face {
+  font-family : "HarmonyOS-Regular";
+  src         : url("../Fonts/Chinese-Fonts/HarmonyOS_Sans_SC_Regular.woff2");
+  font-display: swap;
+}
+
+
+/* ——————————————————————————————— 英文字体 ——————————————————————————————— */
+
+/* 行间代码 */
+@font-face {
+  font-family: "Fira";
+  src        : url("../Fonts/English-Fonts/FiraCode-Regular.woff2");
+}
+
+
+/* 引用块、侧边栏、正文英文 */
+@font-face {
+  font-family : "HarmonyOS-Sans";
+  src         : url("../Fonts/English-Fonts/HarmonyOS_Sans_Regular.woff2");
+  font-display: swap;
+}
+
+
+/* —————————————————————————————————————————— 简化字体 —————————————————————————————————————————— */
+
+/* H1 → H6 标题等级提示符号 */
+@font-face {
+  font-family : "remixicon";
+  src         : url("../Fonts/Iconfont/remixicon.woff2") format("truetype");
+  font-display: swap;
+}
+
+/* 下面是图标名 */
+.iconfont {
+  font-family            : "iconfont" !important;
+  font-size              : 16px;
+  font-style             : normal;
+  -webkit-font-smoothing : antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
