@@ -45,6 +45,16 @@
     /* checkbox SVG */
     --checkbox-checked: url("data:image/svg+xml,%3Csvg class='icon' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cpath d='M425.984 726.016l384-384-59.99-61.995-324.01 324.011-152.021-152.021L213.973 512zm384-598.016q36.01 0 61.013 25.984T896 213.974v596.01q0 34.005-25.003 59.99t-61.013 25.983h-596.01q-36.011 0-61.014-25.984t-25.003-59.989v-596.01q0-34.006 25.003-59.99T213.973 128h596.011z' fill='%2365b73b'/%3E%3C/svg%3E");
     --checkbox-unchecked: url("data:image/svg+xml,%3Csvg class='icon' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cpath d='M810.667 213.333v597.334H213.333V213.333h597.334m0-85.333H213.333C166.4 128 128 166.4 128 213.333v597.334C128 857.6 166.4 896 213.333 896h597.334C857.6 896 896 857.6 896 810.667V213.333C896 166.4 857.6 128 810.667 128z' fill='%23333333'/%3E%3C/svg%3E");
+
+    /* ── 文件树图标 & 层级参考线（思路参考 Obsidian 主题）── */
+    /* 图标配色：轻度着色，呼应主题色系 */
+    --icon-folder-color: #4f7cac;   /* 文件夹：柔蓝（呼应 --color-h3）*/
+    --icon-file-color:   #5fa776;   /* 文件：柔绿（呼应 --color-accent）*/
+    --tree-guide-color:  rgba(136, 179, 228, 0.28); /* 层级参考线（与列表缩进线同色系）*/
+    /* 线性图标（Lucide，viewBox 24×24，描边 2；作 mask 用，颜色由 background-color 决定）*/
+    --icon-file: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z'/%3E%3Cpath d='M14 2v4a2 2 0 0 0 2 2h4M10 9H8m8 4H8m8 4H8'/%3E%3C/svg%3E");
+    --icon-folder-closed: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/%3E%3C/svg%3E");
+    --icon-folder-open: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.55 6a2 2 0 0 1-1.94 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l1.81 2.7a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2'/%3E%3C/svg%3E");
 }
 
 /* =====================================================================
@@ -254,7 +264,7 @@ h3 a {
 /* ── 各级标题 ── */
 h1 {
     text-align: center;
-    font-size: 1.75em !important;
+    font-size: 1.7em !important;
     padding: 0.3em 4px;
     border-bottom: 2px solid;
     border-bottom-width: 2px;
@@ -264,7 +274,7 @@ h1 {
 }
 
 h2 {
-    font-size: 1.7rem;
+    font-size: 1.65rem;
     line-height: 1.225;
     margin: 35px 0 20px;
     padding-bottom: 0.4em;
@@ -288,16 +298,15 @@ h4 {
     font-size: 1.2rem;
     color: var(--color-h4);
     border-bottom: 1px dashed rgba(26, 122, 94, 0.32);
-    padding-bottom: 2px;
     display: inline-block;
 }
 
 h5 {
-    font-size: 1rem;
+    font-size: 1.1rem;
 }
 
 h6 {
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: #777;
 }
 
@@ -653,6 +662,61 @@ header,
 .megamenu-content,
 footer {
     font-family: var(--writeArea-text-font);
+}
+
+/* =====================================================================
+   文件树图标 & 层级参考线
+   思路参考 Obsidian 主题：用线性 SVG + mask 替换 Typora 默认文件树图标，
+   并为每层 .file-node-children 画一条细参考线，方便看出文件夹层级。
+   - 文件夹（蓝）/文件（绿）轻度着色，区分更清晰
+   - 文件夹展开/收起两态（依赖 [data-is-directory] 与 .file-node-expanded）
+   说明：Typora 文件树 DOM 不暴露扩展名，无法像 Obsidian 那样按类型细分图标，
+        故仅做「文件夹 vs 文件」区分（这正是区分文件/文件夹的核心需求）。
+   ===================================================================== */
+
+/* 隐藏 Typora 默认文件树图标（svg/FontAwesome 字形）*/
+.file-node-content .file-node-icon::before { content: none; }
+.file-node-content .file-node-icon > * { display: none !important; }
+
+/* 图标容器：居中放置自定义图标 */
+.file-node-content .file-node-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* 图标基底：默认 = 文件图标（绿）*/
+.file-node-content .file-node-icon::after {
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    -webkit-mask: var(--icon-file) center / contain no-repeat;
+            mask: var(--icon-file) center / contain no-repeat;
+    background-color: var(--icon-file-color);
+}
+
+/* 文件夹（收起态）：闭合文件夹图标（蓝）
+   注意：必须用 > 直接子代。文件夹节点会包裹整棵子树，若用后代选择器，
+   嵌套的文件/子文件夹都会被命中（文件会变成文件夹图标）。*/
+[data-is-directory="true"]:not(.file-node-expanded) > .file-node-content .file-node-icon::after {
+    -webkit-mask: var(--icon-folder-closed) center / contain no-repeat;
+            mask: var(--icon-folder-closed) center / contain no-repeat;
+    background-color: var(--icon-folder-color);
+}
+
+/* 文件夹（展开态）：打开文件夹图标（蓝）*/
+[data-is-directory="true"].file-node-expanded > .file-node-content .file-node-icon::after {
+    -webkit-mask: var(--icon-folder-open) center / contain no-repeat;
+            mask: var(--icon-folder-open) center / contain no-repeat;
+    background-color: var(--icon-folder-color);
+}
+
+/* ── 层级参考线：每层子级容器左侧一条细线（展开时显示，收起时随容器隐藏）── */
+.file-node-children {
+    margin-left: 7px;
+    border-left: 1px solid var(--tree-guide-color);
 }
 
 .file-node-content:hover .file-node-icon,
